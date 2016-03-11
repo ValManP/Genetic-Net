@@ -13,8 +13,8 @@ public:
 		vector<vector<int>> matr = n.getNetMatrix();
 
 		// Проставляем все ребра в графе, создавая вершины
-		for (int i; i < matr.size(); i++){
-			for (int j = 0; j < matr.size(); j++)
+		for (unsigned int i = 0; i < matr.size(); i++){
+			for (unsigned int j = 0; j < matr.size(); j++)
 				if (i != j && matr[i][j] != 0) {
 					graph->AddEdge("D" + i, "D" + j);
 				}
@@ -23,7 +23,7 @@ public:
 		// Заполняем граф данными
 		vector<NE_to_Platform> genome = gen.getGenome();
 
-		for (int i; i < genome.size(); i++){
+		for (unsigned int i = 0; i < genome.size(); i++){
 			if (genome[i].isSet) {
 				graph->FindNode("D" + genome[i].position)->Attr->Color = Microsoft::Msagl::Drawing::Color::Green;
 				graph->FindNode("D" + genome[i].position)->LabelText = gcnew System::String((desc.storage[i].name + "\nCapacity ").c_str()) +desc.storage[i].capacity.ToString();
@@ -51,14 +51,15 @@ public:
 		
 	}
 
-	System::Collections::Generic::Dictionary <int, int>^ viewChart(NetworkPopulation* p){
-		System::Collections::Generic::Dictionary <int, int>^ f1 = gcnew System::Collections::Generic::Dictionary<int, int>();
-		vector<Net> data = p->getData();
+	System::Windows::Forms::DataVisualization::Charting::Series^ getFillSeries(NetworkPopulation population) {
+		System::Windows::Forms::DataVisualization::Charting::Series^ result = gcnew System::Windows::Forms::DataVisualization::Charting::Series();
 
-		for (Net iter : data){
-			f1->Add(iter.averageCapacity, iter.price);
+		vector<Net> data = population.getData();
+
+		for (Net iter : data) {
+			result->Points->AddXY(iter.averageCapacity, iter.price);
 		}
 
-		return f1;
+		return result;
 	}
 };

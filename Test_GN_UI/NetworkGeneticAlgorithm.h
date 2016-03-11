@@ -231,14 +231,14 @@ public:
 		vector<Net> data = population.getData();
 		vector<bool> flags(data.size(), false);
 		result += "Pair    Count\n";
-		for (int i = 0; i < flags.size(); i++) {
+		for (unsigned int i = 0; i < flags.size(); i++) {
 			if (flags[i] == false) {
 				_itoa_s(data[i].price, tmp, 10);
 				result += "(" + (string)tmp + ", ";
 				_itoa_s(data[i].averageCapacity, tmp, 10);
 				result += (string)tmp + ")  ";
 				count = 1;
-				for (int j = i + 1; j < flags.size(); j++) {
+				for (unsigned int j = i + 1; j < flags.size(); j++) {
 					if (data[i] == data[j]) {
 						count++;
 						flags[j] = true;

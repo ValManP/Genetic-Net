@@ -236,7 +236,7 @@ int Network::solveLp(int dev, bool all)
 
 	solve(lp);
 
-	return get_objective(lp);
+	return (int)get_objective(lp);
 	
 }
 

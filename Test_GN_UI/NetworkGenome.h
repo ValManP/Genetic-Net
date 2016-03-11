@@ -82,7 +82,7 @@ public:
 
 		int devicePosition, i = 0;
 
-		for (int i = 0; i < genome.size(); i++) {
+		for (unsigned int i = 0; i < genome.size(); i++) {
 			if (genome[i].isSet == 1) {
 				devicePosition = genome[i].position;
 				while (positions[devicePosition] == 1)

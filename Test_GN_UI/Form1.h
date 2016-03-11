@@ -41,15 +41,6 @@ namespace Test_GN_UI {
 			population = new NetworkPopulation(0, "NA");
 			gnet = new NetworkGeneticAlgorithm();
 			vis = new Visualizator();
-			/*
-			(*population).setNet(*testNet);
-			(*gnet).setPopulation(*population);
-			(*gnet).createPopulation(*description, POPULATION_SIZE);
-			(*gnet).gaFitness(*description);*/
-
-			toolTip2->SetToolTip(textBox1, "Размер популяции");
-			toolTip2->SetToolTip(textBox2, "Число потомков");
-			toolTip2->SetToolTip(textBox3, "Число отбираемых особей");
 
 			richTextBox1->AppendText("LOG\n\n");
 		}
@@ -106,14 +97,20 @@ namespace Test_GN_UI {
 	private: System::Windows::Forms::Button^  button4;
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::GroupBox^  groupBox2;
-	private: System::Windows::Forms::TextBox^  textBox2;
-	private: System::Windows::Forms::TextBox^  textBox3;
+	private: System::Windows::Forms::TextBox^  textBox_EVOLUTION_COUNT;
+	private: System::Windows::Forms::TextBox^  textBox_SELECTION_COUNT;
+
+
 	private: System::Windows::Forms::ToolTip^  toolTip1;
 	private: System::Windows::Forms::ToolTip^  toolTip2;
 	private: System::Windows::Forms::TabPage^  tabPage3;
 	private: System::Windows::Forms::Button^  button5;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
 	private: System::Windows::Forms::Button^  statButton;
+	private: System::Windows::Forms::Label^  label_EVOLUTION_COUNT;
+	private: System::Windows::Forms::Label^  label_SELECTION_COUNT;
+
+
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^  chart1;
 
 #pragma region Windows Form Designer generated code
@@ -129,8 +126,10 @@ namespace Test_GN_UI {
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
-			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
-			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
+			this->label_SELECTION_COUNT = (gcnew System::Windows::Forms::Label());
+			this->label_EVOLUTION_COUNT = (gcnew System::Windows::Forms::Label());
+			this->textBox_SELECTION_COUNT = (gcnew System::Windows::Forms::TextBox());
+			this->textBox_EVOLUTION_COUNT = (gcnew System::Windows::Forms::TextBox());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->button3 = (gcnew System::Windows::Forms::Button());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
@@ -182,36 +181,56 @@ namespace Test_GN_UI {
 			// 
 			// groupBox2
 			// 
-			this->groupBox2->Controls->Add(this->textBox3);
-			this->groupBox2->Controls->Add(this->textBox2);
+			this->groupBox2->Controls->Add(this->label_SELECTION_COUNT);
+			this->groupBox2->Controls->Add(this->label_EVOLUTION_COUNT);
+			this->groupBox2->Controls->Add(this->textBox_SELECTION_COUNT);
+			this->groupBox2->Controls->Add(this->textBox_EVOLUTION_COUNT);
 			this->groupBox2->Controls->Add(this->textBox1);
 			this->groupBox2->Controls->Add(this->button3);
 			this->groupBox2->Location = System::Drawing::Point(28, 274);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(357, 157);
+			this->groupBox2->Size = System::Drawing::Size(420, 157);
 			this->groupBox2->TabIndex = 7;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Настройки генетического алгоритма";
 			// 
-			// textBox3
+			// label_SELECTION_COUNT
 			// 
-			this->textBox3->Location = System::Drawing::Point(28, 118);
-			this->textBox3->Name = L"textBox3";
-			this->textBox3->Size = System::Drawing::Size(144, 20);
-			this->textBox3->TabIndex = 6;
-			this->textBox3->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::textBox3_KeyUp);
+			this->label_SELECTION_COUNT->AutoSize = true;
+			this->label_SELECTION_COUNT->Location = System::Drawing::Point(248, 121);
+			this->label_SELECTION_COUNT->Name = L"label_SELECTION_COUNT";
+			this->label_SELECTION_COUNT->Size = System::Drawing::Size(149, 13);
+			this->label_SELECTION_COUNT->TabIndex = 8;
+			this->label_SELECTION_COUNT->Text = L"Число вымирающих особей";
 			// 
-			// textBox2
+			// label_EVOLUTION_COUNT
 			// 
-			this->textBox2->Location = System::Drawing::Point(28, 81);
-			this->textBox2->Name = L"textBox2";
-			this->textBox2->Size = System::Drawing::Size(144, 20);
-			this->textBox2->TabIndex = 5;
-			this->textBox2->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::textBox2_KeyUp);
+			this->label_EVOLUTION_COUNT->AutoSize = true;
+			this->label_EVOLUTION_COUNT->Location = System::Drawing::Point(276, 84);
+			this->label_EVOLUTION_COUNT->Name = L"label_EVOLUTION_COUNT";
+			this->label_EVOLUTION_COUNT->Size = System::Drawing::Size(91, 13);
+			this->label_EVOLUTION_COUNT->TabIndex = 7;
+			this->label_EVOLUTION_COUNT->Text = L"Число потомков";
+			// 
+			// textBox_SELECTION_COUNT
+			// 
+			this->textBox_SELECTION_COUNT->Location = System::Drawing::Point(57, 118);
+			this->textBox_SELECTION_COUNT->Name = L"textBox_SELECTION_COUNT";
+			this->textBox_SELECTION_COUNT->Size = System::Drawing::Size(144, 20);
+			this->textBox_SELECTION_COUNT->TabIndex = 6;
+			this->textBox_SELECTION_COUNT->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::textBox3_KeyUp);
+			// 
+			// textBox_EVOLUTION_COUNT
+			// 
+			this->textBox_EVOLUTION_COUNT->Location = System::Drawing::Point(57, 81);
+			this->textBox_EVOLUTION_COUNT->Name = L"textBox_EVOLUTION_COUNT";
+			this->textBox_EVOLUTION_COUNT->Size = System::Drawing::Size(144, 20);
+			this->textBox_EVOLUTION_COUNT->TabIndex = 5;
+			this->textBox_EVOLUTION_COUNT->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::textBox2_KeyUp);
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(28, 43);
+			this->textBox1->Location = System::Drawing::Point(57, 43);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(144, 20);
 			this->textBox1->TabIndex = 3;
@@ -219,7 +238,7 @@ namespace Test_GN_UI {
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(189, 41);
+			this->button3->Location = System::Drawing::Point(266, 41);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(113, 23);
 			this->button3->TabIndex = 4;
@@ -324,11 +343,11 @@ namespace Test_GN_UI {
 			// 
 			// button5
 			// 
-			this->button5->Location = System::Drawing::Point(592, 54);
+			this->button5->Location = System::Drawing::Point(593, 70);
 			this->button5->Name = L"button5";
 			this->button5->Size = System::Drawing::Size(149, 24);
 			this->button5->TabIndex = 1;
-			this->button5->Text = L"test";
+			this->button5->Text = L"Показать лучшую особь";
 			this->button5->UseVisualStyleBackColor = true;
 			this->button5->Click += gcnew System::EventHandler(this, &Form1::button5_Click);
 			// 
@@ -430,14 +449,14 @@ private: System::Void textBox1_KeyUp(System::Object^  sender, System::Windows::F
 private: System::Void textBox2_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 	if (e->KeyCode == Keys::Enter)
 	{
-		EVOLUTION_COUNT = System::Convert::ToInt32(textBox2->Text);
+		EVOLUTION_COUNT = System::Convert::ToInt32(textBox_EVOLUTION_COUNT->Text);
 		richTextBox1->AppendText("EVOLUTION_COUNT = " + EVOLUTION_COUNT + "\n");
 	}
 }
 private: System::Void textBox3_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 	if (e->KeyCode == Keys::Enter)
 	{
-		SELECTION_COUNT = System::Convert::ToInt32(textBox3->Text);
+		SELECTION_COUNT = System::Convert::ToInt32(textBox_SELECTION_COUNT->Text);
 		richTextBox1->AppendText("SELECTION_COUNT = " + SELECTION_COUNT + "\n");
 	}
 }
@@ -445,11 +464,6 @@ private: System::Void toolTip2_Popup(System::Object^  sender, System::Windows::F
 }
 private: System::Void button5_Click(System::Object^  sender, System::EventArgs^  e) {
 	Microsoft::Msagl::GraphViewerGdi::GViewer^ viewer = gcnew Microsoft::Msagl::GraphViewerGdi::GViewer();
-	/*
-	// create the graph content
-	graph->AddEdge("A", "B");
-	graph->AddEdge("B", "C");
-	graph->AddEdge("A", "C");*/
 
 	Microsoft::Msagl::Drawing::Graph^ graph = vis->viewBestGenome(gnet, *description);
 
@@ -460,28 +474,17 @@ private: System::Void button5_Click(System::Object^  sender, System::EventArgs^ 
 	pictureBox1->ResumeLayout();
 }
 private: System::Void statButton_Click(System::Object^  sender, System::EventArgs^  e) {
-	ChartArea ^chartArea = gcnew ChartArea();
-	//Область в которой будет построен график (их может быть несколько)
-	chartArea->Name = "chartArea";
-	chart1->ChartAreas->Add(chartArea);
-	// График (их может быть несколько)
 
-	System::Collections::Generic::Dictionary <int, int>^ d = vis->viewChart(population);
+	chart1->ChartAreas->Add(gcnew ChartArea("Default"));
 
-	Series ^series1 = gcnew Series();
-	series1->ChartType = SeriesChartType::Line;
+	Series ^series1 = vis->getFillSeries((*gnet).getPopulation());
+	series1->ChartType = SeriesChartType::Point;
 	series1->MarkerStyle = MarkerStyle::Circle;
-	series1->ChartArea = "chartArea";
-
-
-	series1->Points->DataBindXY(d->Keys, d->Values);
+	series1->ChartArea = "Default";
 	series1->Color = System::Drawing::Color::Green;
 	series1->BorderWidth = 2;
 
-	series1->IsValueShownAsLabel = true;
-
 	chart1->Series->Add(series1); 
-	//chart1->ResumeLayout();
 }
 };
 }
