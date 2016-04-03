@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GAGenome.h"
+using namespace std;
 
 template<class Genotype, class FitnessValue>
 class GAPopulation {
@@ -30,5 +30,9 @@ public:
 
 	vector<Genotype> getPopulation(){
 		return population;
+	}
+
+	Genotype getGenome(int i){
+		return population[i];
 	}
 };

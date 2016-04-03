@@ -51,15 +51,39 @@ public:
 		
 	}
 
-	System::Windows::Forms::DataVisualization::Charting::Series^ getFillSeries(NetworkPopulation population) {
-		System::Windows::Forms::DataVisualization::Charting::Series^ result = gcnew System::Windows::Forms::DataVisualization::Charting::Series();
+	System::Windows::Forms::DataVisualization::Charting::Series^ getFillSeries(NetworkPopulation population, int generation) {
+		System::Windows::Forms::DataVisualization::Charting::Series^ result = gcnew System::Windows::Forms::DataVisualization::Charting::Series("Generation " + generation);
 
 		vector<Net> data = population.getData();
 
+		result->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Point;
+		result->MarkerStyle = System::Windows::Forms::DataVisualization::Charting::MarkerStyle::Circle;
+		result->Color = System::Drawing::Color::Green;
+		result->BorderWidth = 2;
+
 		for (Net iter : data) {
-			result->Points->AddXY(iter.averageCapacity, iter.price);
+			if (iter.averageCapacity != 0) {
+				result->Points->AddXY(iter.averageCapacity, iter.price);
+			}
 		}
 
 		return result;
+	}
+
+	Microsoft::Msagl::Drawing::Graph^ viewNetwork(Network net){
+		Microsoft::Msagl::Drawing::Graph^ graph = gcnew Microsoft::Msagl::Drawing::Graph();
+
+		vector<vector<int>> matr = net.getNetMatrix();
+
+		// Проставляем все ребра в графе, создавая вершины
+		for (unsigned int i = 0; i < matr.size(); i++){
+			for (unsigned int j = 0; j < matr.size(); j++)
+				if (i != j && matr[i][j] != 0) {
+					graph->AddEdge("D" + i, "D" + j);
+				}
+		}
+
+		return graph;
+
 	}
 };

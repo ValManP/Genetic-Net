@@ -63,6 +63,12 @@ public:
 		size = population.size();
 	}
 
+	void addAll(NetworkPopulation p){
+		for (int i = 0; i < p.getSize(); i++) {
+			this->add(p.getGenome(i));
+		}
+	}
+
 	void setFitness(vector<int> new_fitness);
 	vector<int> getFitness();
 	void setNet(Network new_net);

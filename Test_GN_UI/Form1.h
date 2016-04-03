@@ -14,6 +14,7 @@ namespace Test_GN_UI {
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
+	using namespace System::Collections::ObjectModel;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
@@ -41,6 +42,8 @@ namespace Test_GN_UI {
 			population = new NetworkPopulation(0, "NA");
 			gnet = new NetworkGeneticAlgorithm();
 			vis = new Visualizator();
+
+			series = gcnew Collection<Series^>();
 
 			richTextBox1->AppendText("LOG\n\n");
 		}
@@ -77,15 +80,20 @@ namespace Test_GN_UI {
 		NetworkPopulation *population;
 		NetworkDescription *description;
 		NetworkGeneticAlgorithm *gnet;
+		GACrossover<NetworkGenome, NetworkDescription> *crossover;
+		GAMutation<NetworkGenome, NetworkDescription> *mutation;
 		Visualizator *vis;
 
 		String^ STORAGE_NAME;
 		String^ NET_NAME;
 
+		Collection<Series^>^ series;
+
 		int POPULATION_SIZE;
 		int GENERATION = 0;
 		int EVOLUTION_COUNT = 20;
-		double MUTATION = 0.5;
+		double MUTATION = 0.01;
+		int MUTATION_COUNT = 10;
 
 		int SELECTION_COUNT = 20;
 		int MAX_PRICE = 50;
@@ -106,9 +114,29 @@ namespace Test_GN_UI {
 	private: System::Windows::Forms::TabPage^  tabPage3;
 	private: System::Windows::Forms::Button^  button5;
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
-	private: System::Windows::Forms::Button^  statButton;
+
 	private: System::Windows::Forms::Label^  label_EVOLUTION_COUNT;
 	private: System::Windows::Forms::Label^  label_SELECTION_COUNT;
+	private: System::Windows::Forms::CheckBox^  checkBox2_show_all;
+	private: System::Windows::Forms::ComboBox^  generationViewComboBox;
+	private: System::Windows::Forms::Button^  viewNetButton;
+	private: System::Windows::Forms::Label^  label2;
+	private: System::Windows::Forms::ComboBox^  mutationComboBox;
+
+
+	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::ComboBox^  comboBox1;
+	private: System::Windows::Forms::Label^  crossoverType;
+	private: System::Windows::Forms::ComboBox^  crossoverTypeComboBox;
+	private: System::Windows::Forms::Label^  parentChoiceType;
+	private: System::Windows::Forms::ComboBox^  parentChoiceComboBox;
+private: System::Windows::Forms::Label^  label4;
+private: System::Windows::Forms::TextBox^  mutationProbabilityTextBox;
+private: System::Windows::Forms::Label^  label3;
+private: System::Windows::Forms::TextBox^  mutationCountTextBox;
+
+
+
 
 
 	private: System::Windows::Forms::DataVisualization::Charting::Chart^  chart1;
@@ -126,6 +154,18 @@ namespace Test_GN_UI {
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->mutationProbabilityTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->mutationCountTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->mutationComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
+			this->crossoverType = (gcnew System::Windows::Forms::Label());
+			this->crossoverTypeComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->parentChoiceType = (gcnew System::Windows::Forms::Label());
+			this->parentChoiceComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->label_SELECTION_COUNT = (gcnew System::Windows::Forms::Label());
 			this->label_EVOLUTION_COUNT = (gcnew System::Windows::Forms::Label());
 			this->textBox_SELECTION_COUNT = (gcnew System::Windows::Forms::TextBox());
@@ -138,9 +178,11 @@ namespace Test_GN_UI {
 			this->button4 = (gcnew System::Windows::Forms::Button());
 			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
-			this->statButton = (gcnew System::Windows::Forms::Button());
+			this->generationViewComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->checkBox2_show_all = (gcnew System::Windows::Forms::CheckBox());
 			this->chart1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Chart());
 			this->tabPage3 = (gcnew System::Windows::Forms::TabPage());
+			this->viewNetButton = (gcnew System::Windows::Forms::Button());
 			this->button5 = (gcnew System::Windows::Forms::Button());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->toolTip2 = (gcnew System::Windows::Forms::ToolTip(this->components));
@@ -162,8 +204,9 @@ namespace Test_GN_UI {
 			this->tabControl1->Location = System::Drawing::Point(12, 12);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(826, 502);
+			this->tabControl1->Size = System::Drawing::Size(826, 569);
 			this->tabControl1->TabIndex = 0;
+			this->tabControl1->Selecting += gcnew System::Windows::Forms::TabControlCancelEventHandler(this, &Form1::tabControl1_Selecting);
 			// 
 			// tabPage1
 			// 
@@ -174,47 +217,167 @@ namespace Test_GN_UI {
 			this->tabPage1->Location = System::Drawing::Point(4, 22);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(818, 476);
+			this->tabPage1->Size = System::Drawing::Size(818, 543);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"Общее";
 			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->Controls->Add(this->label4);
+			this->groupBox2->Controls->Add(this->mutationProbabilityTextBox);
+			this->groupBox2->Controls->Add(this->label3);
+			this->groupBox2->Controls->Add(this->mutationCountTextBox);
+			this->groupBox2->Controls->Add(this->label2);
+			this->groupBox2->Controls->Add(this->mutationComboBox);
+			this->groupBox2->Controls->Add(this->label1);
+			this->groupBox2->Controls->Add(this->comboBox1);
+			this->groupBox2->Controls->Add(this->crossoverType);
+			this->groupBox2->Controls->Add(this->crossoverTypeComboBox);
+			this->groupBox2->Controls->Add(this->parentChoiceType);
+			this->groupBox2->Controls->Add(this->parentChoiceComboBox);
 			this->groupBox2->Controls->Add(this->label_SELECTION_COUNT);
 			this->groupBox2->Controls->Add(this->label_EVOLUTION_COUNT);
 			this->groupBox2->Controls->Add(this->textBox_SELECTION_COUNT);
 			this->groupBox2->Controls->Add(this->textBox_EVOLUTION_COUNT);
 			this->groupBox2->Controls->Add(this->textBox1);
 			this->groupBox2->Controls->Add(this->button3);
-			this->groupBox2->Location = System::Drawing::Point(28, 274);
+			this->groupBox2->Location = System::Drawing::Point(28, 232);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(420, 157);
+			this->groupBox2->Size = System::Drawing::Size(750, 305);
 			this->groupBox2->TabIndex = 7;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Настройки генетического алгоритма";
 			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(592, 114);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(117, 13);
+			this->label4->TabIndex = 20;
+			this->label4->Text = L"Вероятность мутации";
+			// 
+			// mutationProbabilityTextBox
+			// 
+			this->mutationProbabilityTextBox->Location = System::Drawing::Point(401, 111);
+			this->mutationProbabilityTextBox->Name = L"mutationProbabilityTextBox";
+			this->mutationProbabilityTextBox->Size = System::Drawing::Size(144, 20);
+			this->mutationProbabilityTextBox->TabIndex = 19;
+			this->toolTip2->SetToolTip(this->mutationProbabilityTextBox, L"Для ввода нажмите Пробел");
+			this->mutationProbabilityTextBox->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::mutationProbabilityTextBox_KeyUp);
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(214, 114);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(84, 13);
+			this->label3->TabIndex = 18;
+			this->label3->Text = L"Число мутаций";
+			// 
+			// mutationCountTextBox
+			// 
+			this->mutationCountTextBox->Location = System::Drawing::Point(23, 111);
+			this->mutationCountTextBox->Name = L"mutationCountTextBox";
+			this->mutationCountTextBox->Size = System::Drawing::Size(144, 20);
+			this->mutationCountTextBox->TabIndex = 17;
+			this->toolTip2->SetToolTip(this->mutationCountTextBox, L"Для ввода нажмите Пробел");
+			this->mutationCountTextBox->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::mutationCountTextBox_KeyUp);
+			// 
+			// label2
+			// 
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(214, 267);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(71, 13);
+			this->label2->TabIndex = 16;
+			this->label2->Text = L"Тип мутации";
+			// 
+			// mutationComboBox
+			// 
+			this->mutationComboBox->FormattingEnabled = true;
+			this->mutationComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Дополнение" });
+			this->mutationComboBox->Location = System::Drawing::Point(23, 264);
+			this->mutationComboBox->Name = L"mutationComboBox";
+			this->mutationComboBox->Size = System::Drawing::Size(144, 21);
+			this->mutationComboBox->TabIndex = 15;
+			this->mutationComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::mutationComboBox_SelectedIndexChanged);
+			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(214, 230);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(77, 13);
+			this->label1->TabIndex = 14;
+			this->label1->Text = L"Тип селекции";
+			// 
+			// comboBox1
+			// 
+			this->comboBox1->FormattingEnabled = true;
+			this->comboBox1->Location = System::Drawing::Point(23, 227);
+			this->comboBox1->Name = L"comboBox1";
+			this->comboBox1->Size = System::Drawing::Size(144, 21);
+			this->comboBox1->TabIndex = 13;
+			// 
+			// crossoverType
+			// 
+			this->crossoverType->AutoSize = true;
+			this->crossoverType->Location = System::Drawing::Point(214, 192);
+			this->crossoverType->Name = L"crossoverType";
+			this->crossoverType->Size = System::Drawing::Size(89, 13);
+			this->crossoverType->TabIndex = 12;
+			this->crossoverType->Text = L"Тип кроссовера";
+			// 
+			// crossoverTypeComboBox
+			// 
+			this->crossoverTypeComboBox->FormattingEnabled = true;
+			this->crossoverTypeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Одноточечный кроссовер", L"Однородный кроссовер" });
+			this->crossoverTypeComboBox->Location = System::Drawing::Point(23, 189);
+			this->crossoverTypeComboBox->Name = L"crossoverTypeComboBox";
+			this->crossoverTypeComboBox->Size = System::Drawing::Size(144, 21);
+			this->crossoverTypeComboBox->TabIndex = 11;
+			this->crossoverTypeComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::crossoverTypeComboBox_SelectedIndexChanged);
+			// 
+			// parentChoiceType
+			// 
+			this->parentChoiceType->AutoSize = true;
+			this->parentChoiceType->Location = System::Drawing::Point(214, 152);
+			this->parentChoiceType->Name = L"parentChoiceType";
+			this->parentChoiceType->Size = System::Drawing::Size(141, 13);
+			this->parentChoiceType->TabIndex = 10;
+			this->parentChoiceType->Text = L"Способ выбора родителей";
+			// 
+			// parentChoiceComboBox
+			// 
+			this->parentChoiceComboBox->FormattingEnabled = true;
+			this->parentChoiceComboBox->Location = System::Drawing::Point(23, 149);
+			this->parentChoiceComboBox->Name = L"parentChoiceComboBox";
+			this->parentChoiceComboBox->Size = System::Drawing::Size(144, 21);
+			this->parentChoiceComboBox->TabIndex = 9;
+			// 
 			// label_SELECTION_COUNT
 			// 
 			this->label_SELECTION_COUNT->AutoSize = true;
-			this->label_SELECTION_COUNT->Location = System::Drawing::Point(248, 121);
+			this->label_SELECTION_COUNT->Location = System::Drawing::Point(592, 76);
 			this->label_SELECTION_COUNT->Name = L"label_SELECTION_COUNT";
-			this->label_SELECTION_COUNT->Size = System::Drawing::Size(149, 13);
+			this->label_SELECTION_COUNT->Size = System::Drawing::Size(143, 13);
 			this->label_SELECTION_COUNT->TabIndex = 8;
-			this->label_SELECTION_COUNT->Text = L"Число вымирающих особей";
+			this->label_SELECTION_COUNT->Text = L"Число отбираемых особей";
 			// 
 			// label_EVOLUTION_COUNT
 			// 
 			this->label_EVOLUTION_COUNT->AutoSize = true;
-			this->label_EVOLUTION_COUNT->Location = System::Drawing::Point(276, 84);
+			this->label_EVOLUTION_COUNT->Location = System::Drawing::Point(214, 76);
 			this->label_EVOLUTION_COUNT->Name = L"label_EVOLUTION_COUNT";
-			this->label_EVOLUTION_COUNT->Size = System::Drawing::Size(91, 13);
+			this->label_EVOLUTION_COUNT->Size = System::Drawing::Size(115, 13);
 			this->label_EVOLUTION_COUNT->TabIndex = 7;
-			this->label_EVOLUTION_COUNT->Text = L"Число потомков";
+			this->label_EVOLUTION_COUNT->Text = L"Число \"брачных пар\"";
 			// 
 			// textBox_SELECTION_COUNT
 			// 
-			this->textBox_SELECTION_COUNT->Location = System::Drawing::Point(57, 118);
+			this->textBox_SELECTION_COUNT->Location = System::Drawing::Point(401, 73);
 			this->textBox_SELECTION_COUNT->Name = L"textBox_SELECTION_COUNT";
 			this->textBox_SELECTION_COUNT->Size = System::Drawing::Size(144, 20);
 			this->textBox_SELECTION_COUNT->TabIndex = 6;
@@ -222,15 +385,16 @@ namespace Test_GN_UI {
 			// 
 			// textBox_EVOLUTION_COUNT
 			// 
-			this->textBox_EVOLUTION_COUNT->Location = System::Drawing::Point(57, 81);
+			this->textBox_EVOLUTION_COUNT->Location = System::Drawing::Point(23, 73);
 			this->textBox_EVOLUTION_COUNT->Name = L"textBox_EVOLUTION_COUNT";
 			this->textBox_EVOLUTION_COUNT->Size = System::Drawing::Size(144, 20);
 			this->textBox_EVOLUTION_COUNT->TabIndex = 5;
+			this->toolTip2->SetToolTip(this->textBox_EVOLUTION_COUNT, L"Для ввода нажмите Пробел");
 			this->textBox_EVOLUTION_COUNT->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::textBox2_KeyUp);
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(57, 43);
+			this->textBox1->Location = System::Drawing::Point(23, 35);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(144, 20);
 			this->textBox1->TabIndex = 3;
@@ -238,9 +402,9 @@ namespace Test_GN_UI {
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(266, 41);
+			this->button3->Location = System::Drawing::Point(217, 33);
 			this->button3->Name = L"button3";
-			this->button3->Size = System::Drawing::Size(113, 23);
+			this->button3->Size = System::Drawing::Size(138, 23);
 			this->button3->TabIndex = 4;
 			this->button3->Text = L"Задать популяцию";
 			this->button3->UseVisualStyleBackColor = true;
@@ -250,7 +414,7 @@ namespace Test_GN_UI {
 			// 
 			this->groupBox1->Controls->Add(this->button1);
 			this->groupBox1->Controls->Add(this->button2);
-			this->groupBox1->Location = System::Drawing::Point(481, 53);
+			this->groupBox1->Location = System::Drawing::Point(483, 23);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Size = System::Drawing::Size(295, 105);
 			this->groupBox1->TabIndex = 6;
@@ -279,7 +443,7 @@ namespace Test_GN_UI {
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(517, 198);
+			this->button4->Location = System::Drawing::Point(519, 152);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(234, 40);
 			this->button4->TabIndex = 5;
@@ -289,7 +453,7 @@ namespace Test_GN_UI {
 			// 
 			// richTextBox1
 			// 
-			this->richTextBox1->Location = System::Drawing::Point(28, 53);
+			this->richTextBox1->Location = System::Drawing::Point(28, 23);
 			this->richTextBox1->Name = L"richTextBox1";
 			this->richTextBox1->Size = System::Drawing::Size(420, 185);
 			this->richTextBox1->TabIndex = 1;
@@ -297,25 +461,36 @@ namespace Test_GN_UI {
 			// 
 			// tabPage2
 			// 
-			this->tabPage2->Controls->Add(this->statButton);
+			this->tabPage2->Controls->Add(this->generationViewComboBox);
+			this->tabPage2->Controls->Add(this->checkBox2_show_all);
 			this->tabPage2->Controls->Add(this->chart1);
 			this->tabPage2->Location = System::Drawing::Point(4, 22);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(818, 476);
+			this->tabPage2->Size = System::Drawing::Size(818, 543);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"Статистика";
 			this->tabPage2->UseVisualStyleBackColor = true;
 			// 
-			// statButton
+			// generationViewComboBox
 			// 
-			this->statButton->Location = System::Drawing::Point(572, 77);
-			this->statButton->Name = L"statButton";
-			this->statButton->Size = System::Drawing::Size(156, 40);
-			this->statButton->TabIndex = 1;
-			this->statButton->Text = L"Показать статистику";
-			this->statButton->UseVisualStyleBackColor = true;
-			this->statButton->Click += gcnew System::EventHandler(this, &Form1::statButton_Click);
+			this->generationViewComboBox->FormattingEnabled = true;
+			this->generationViewComboBox->Location = System::Drawing::Point(578, 106);
+			this->generationViewComboBox->Name = L"generationViewComboBox";
+			this->generationViewComboBox->Size = System::Drawing::Size(153, 21);
+			this->generationViewComboBox->TabIndex = 4;
+			this->generationViewComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::comboBox1_SelectedIndexChanged);
+			// 
+			// checkBox2_show_all
+			// 
+			this->checkBox2_show_all->AutoSize = true;
+			this->checkBox2_show_all->Location = System::Drawing::Point(578, 69);
+			this->checkBox2_show_all->Name = L"checkBox2_show_all";
+			this->checkBox2_show_all->Size = System::Drawing::Size(153, 17);
+			this->checkBox2_show_all->TabIndex = 3;
+			this->checkBox2_show_all->Text = L"Показать все поколения";
+			this->checkBox2_show_all->UseVisualStyleBackColor = true;
+			this->checkBox2_show_all->CheckedChanged += gcnew System::EventHandler(this, &Form1::checkBox2_show_all_CheckedChanged);
 			// 
 			// chart1
 			// 
@@ -331,19 +506,30 @@ namespace Test_GN_UI {
 			// 
 			// tabPage3
 			// 
+			this->tabPage3->Controls->Add(this->viewNetButton);
 			this->tabPage3->Controls->Add(this->button5);
 			this->tabPage3->Controls->Add(this->pictureBox1);
 			this->tabPage3->Location = System::Drawing::Point(4, 22);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage3->Size = System::Drawing::Size(818, 476);
+			this->tabPage3->Size = System::Drawing::Size(818, 543);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Визуализация сети";
 			this->tabPage3->UseVisualStyleBackColor = true;
 			// 
+			// viewNetButton
+			// 
+			this->viewNetButton->Location = System::Drawing::Point(593, 88);
+			this->viewNetButton->Name = L"viewNetButton";
+			this->viewNetButton->Size = System::Drawing::Size(149, 24);
+			this->viewNetButton->TabIndex = 2;
+			this->viewNetButton->Text = L"Показать сеть";
+			this->viewNetButton->UseVisualStyleBackColor = true;
+			this->viewNetButton->Click += gcnew System::EventHandler(this, &Form1::viewNetButton_Click);
+			// 
 			// button5
 			// 
-			this->button5->Location = System::Drawing::Point(593, 70);
+			this->button5->Location = System::Drawing::Point(593, 35);
 			this->button5->Name = L"button5";
 			this->button5->Size = System::Drawing::Size(149, 24);
 			this->button5->TabIndex = 1;
@@ -372,7 +558,7 @@ namespace Test_GN_UI {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(850, 526);
+			this->ClientSize = System::Drawing::Size(850, 593);
 			this->Controls->Add(this->tabControl1);
 			this->Name = L"Form1";
 			this->Text = L"Form1";
@@ -382,6 +568,7 @@ namespace Test_GN_UI {
 			this->groupBox2->PerformLayout();
 			this->groupBox1->ResumeLayout(false);
 			this->tabPage2->ResumeLayout(false);
+			this->tabPage2->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->chart1))->EndInit();
 			this->tabPage3->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
@@ -396,8 +583,8 @@ namespace Test_GN_UI {
 		if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 		{
 			NET_NAME = openFileDialog.FileName;
-			(*testNet).loadFromFile(msclr::interop::marshal_as<std::string>(openFileDialog.FileName));
-			(*population).setNet(*testNet);
+			testNet->loadFromFile(msclr::interop::marshal_as<std::string>(openFileDialog.FileName));
+			population->setNet(*testNet);
 
 			richTextBox1->AppendText("Network uploaded. (Platform count = "+(*testNet).getPlatformCount() + ")\n");
 		}
@@ -410,34 +597,41 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 		if (openFileDialog.ShowDialog() == System::Windows::Forms::DialogResult::OK)
 		{
 			STORAGE_NAME = openFileDialog.FileName;
-			(*population).fillStorage(msclr::interop::marshal_as<std::string>(openFileDialog.FileName));
+			population->fillStorage(msclr::interop::marshal_as<std::string>(openFileDialog.FileName));
 
-			description = new NetworkDescription(MIN_ALLELE_COUNT, MAX_ALLELE_COUNT, (*population).getStorage());
-			(*gnet).setPopulation(*population);
+			description = new NetworkDescription(MIN_ALLELE_COUNT, MAX_ALLELE_COUNT, population->getStorage());
+			gnet->setPopulation(population);
 			richTextBox1->AppendText("Storage are filled\n");
 		}
 }
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
 		POPULATION_SIZE = System::Convert::ToInt32(textBox1->Text);
 
-		(*gnet).createPopulation(*description, POPULATION_SIZE);
+		gnet->gaCreatePopulation(*description, POPULATION_SIZE);
 
-		(*gnet).gaFitness(*description);
+		gnet->gaFitness(*description);
+
+		series->Add(vis->getFillSeries(gnet->getPopulation(), GENERATION));
 
 		richTextBox1->AppendText("Create Population (POPULATION_SIZE = " + POPULATION_SIZE + ")\n");
+		generationViewComboBox->Items->Add("Generation " + GENERATION);
 
 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
+
+	GENERATION++;
 	richTextBox1->AppendText(gcnew String("Generation " + GENERATION + "\n"));
 
-	(*gnet).gaEvolution(EVOLUTION_COUNT, MUTATION, *description);
-	(*gnet).gaFitness(*description);
+	// Genetic Algoritm
+	gnet->gaCrossbreeding(*description);
+	gnet->gaFitness(*description);
+	gnet->gaSelection(SELECTION_COUNT);
 
-	(*gnet).gaSelection(SELECTION_COUNT, MAX_PRICE);
 	richTextBox1->AppendText(gcnew String((*gnet).gaShowBest(*description).c_str()));
 	richTextBox1->AppendText("\n");
 
-	GENERATION++;
+	series->Add(vis->getFillSeries(gnet->getPopulation(), GENERATION));
+	generationViewComboBox->Items->Add("Generation " + GENERATION);
 }
 
 private: System::Void textBox1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
@@ -450,6 +644,7 @@ private: System::Void textBox2_KeyUp(System::Object^  sender, System::Windows::F
 	if (e->KeyCode == Keys::Enter)
 	{
 		EVOLUTION_COUNT = System::Convert::ToInt32(textBox_EVOLUTION_COUNT->Text);
+		gnet->setCoupleCount(EVOLUTION_COUNT);
 		richTextBox1->AppendText("EVOLUTION_COUNT = " + EVOLUTION_COUNT + "\n");
 	}
 }
@@ -470,21 +665,137 @@ private: System::Void button5_Click(System::Object^  sender, System::EventArgs^ 
 	viewer->Graph = graph;
 	pictureBox1->SuspendLayout();
 	viewer->Dock = System::Windows::Forms::DockStyle::Fill;
+	pictureBox1->Controls->Clear();
 	pictureBox1->Controls->Add(viewer);
 	pictureBox1->ResumeLayout();
 }
 private: System::Void statButton_Click(System::Object^  sender, System::EventArgs^  e) {
 
-	chart1->ChartAreas->Add(gcnew ChartArea("Default"));
+	chart1->ChartAreas->Clear();
+	ChartArea^ area = gcnew ChartArea("Generation " + GENERATION);
+	area->AxisX->Title = "Capacity";
+	area->AxisY->Title = "Price";
+	area->Name = "Generation " + GENERATION;
+	chart1->ChartAreas->Add(area);
 
-	Series ^series1 = vis->getFillSeries((*gnet).getPopulation());
-	series1->ChartType = SeriesChartType::Point;
-	series1->MarkerStyle = MarkerStyle::Circle;
-	series1->ChartArea = "Default";
-	series1->Color = System::Drawing::Color::Green;
-	series1->BorderWidth = 2;
+	chart1->Series->Clear();
+	series[GENERATION]->ChartArea = "Generation " + GENERATION;
+	chart1->Series->Add(series[GENERATION]);
+}
 
-	chart1->Series->Add(series1); 
+private: System::Void checkBox2_show_all_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	if (checkBox2_show_all->Checked) {
+		chart1->ChartAreas->Clear();
+		ChartArea^ area = gcnew ChartArea("ALL");
+		area->AxisX->Title = "Capacity";
+		area->AxisY->Title = "Price";
+		chart1->ChartAreas->Add(area);
+
+		chart1->Series->Clear();
+		series[GENERATION]->ChartArea = "Generation " + GENERATION;
+
+		for (int i = 0; i < GENERATION + 1; i++) {
+			series[i]->Color = Drawing::Color::FromArgb((rand() * i) % 256, (rand() * i) % 256, (rand() * i) % 256);
+			series[i]->ChartArea = "ALL";
+			//series[i]->LegendText = "Generation " + GENERATION;
+			chart1->Series->Add(series[i]);
+		}
+	}
+}
+private: System::Void comboBox1_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	chart1->ChartAreas->Clear();
+	ChartArea^ area = gcnew ChartArea("Generation " + GENERATION);
+	area->AxisX->Title = "Capacity";
+	area->AxisY->Title = "Price";
+	area->Name = "Generation " + generationViewComboBox->SelectedIndex;
+	chart1->ChartAreas->Add(area);
+
+	chart1->Series->Clear();
+	series[generationViewComboBox->SelectedIndex]->ChartArea = "Generation " + generationViewComboBox->SelectedIndex;
+	chart1->Series->Add(series[generationViewComboBox->SelectedIndex]);
+}
+private: System::Void tabControl1_Selecting(System::Object^  sender, System::Windows::Forms::TabControlCancelEventArgs^  e) {
+	if (POPULATION_SIZE != NULL) {
+		chart1->ChartAreas->Clear();
+		ChartArea^ area = gcnew ChartArea("Generation " + GENERATION);
+		area->AxisX->Title = "Capacity";
+		area->AxisY->Title = "Price";
+		area->Name = "Generation " + GENERATION;
+		chart1->ChartAreas->Add(area);
+
+		chart1->Series->Clear();
+		series[GENERATION]->ChartArea = "Generation " + GENERATION;
+		chart1->Series->Add(series[GENERATION]);
+	}
+}
+
+private: System::Void viewNetButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	Microsoft::Msagl::GraphViewerGdi::GViewer^ viewer = gcnew Microsoft::Msagl::GraphViewerGdi::GViewer();
+
+	Microsoft::Msagl::Drawing::Graph^ graph = vis->viewNetwork((*gnet).getPopulation().getNet());
+
+	viewer->Graph = graph;
+	pictureBox1->SuspendLayout();
+	viewer->Dock = System::Windows::Forms::DockStyle::Fill;
+	pictureBox1->Controls->Clear();
+	pictureBox1->Controls->Add(viewer);
+	pictureBox1->ResumeLayout();
+
+}
+private: System::Void crossoverTypeComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+
+
+	switch (crossoverTypeComboBox->SelectedIndex)
+	{
+		case 0: {
+			crossover = new SinglePointCrossover();
+			gnet->setCrossoverOperator(crossover);
+			break;
+		}
+
+		case 1: {
+			crossover = new UniformCrossover();
+			gnet->setCrossoverOperator(crossover);
+			break;
+		}
+
+
+	default:
+		break;
+	}
+
+}
+private: System::Void mutationComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+
+	switch (mutationComboBox->SelectedIndex)
+	{
+	case 0: {
+		mutation = new FlipBitMutation();
+		gnet->setMutationOperator(mutation);
+		break;
+	}
+
+
+	default:
+		break;
+	}
+}
+private: System::Void mutationCountTextBox_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+	if (e->KeyCode == Keys::Space)
+	{
+		MUTATION_COUNT = System::Convert::ToInt32(mutationCountTextBox->Text);
+		gnet->setMutationCount(MUTATION_COUNT);
+		richTextBox1->AppendText("MUTATION_COUNT = " + MUTATION_COUNT + "\n");
+	}
+}
+private: System::Void mutationProbabilityTextBox_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+	if (e->KeyCode == Keys::Space)
+	{
+		MUTATION = System::Convert::ToDouble(mutationProbabilityTextBox->Text);
+		gnet->setMutationProbability(MUTATION);
+		richTextBox1->AppendText("MUTATION = " + MUTATION + "\n");
+	}
 }
 };
 }

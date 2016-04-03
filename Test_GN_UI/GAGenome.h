@@ -1,5 +1,9 @@
 #pragma once
 
+#include <vector>
+
+using namespace std;
+
 template<class Gene, class Data>
 class GAGenome {
 protected:
