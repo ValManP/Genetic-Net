@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Файлы исходного кода">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Заголовочные файлы">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Заголовочные файлы\GACrossover">
+      <UniqueIdentifier>{4246cab9-00d5-47fa-97d8-2ea90187bfe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\GAMutation">
+      <UniqueIdentifier>{ca0e8d54-30ef-43b0-8868-c760063dd3b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\GASelection">
+      <UniqueIdentifier>{4f377e49-4372-47a2-9b85-1c390fbd366c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\GAFitness">
+      <UniqueIdentifier>{59a009e1-3ee7-40cd-bde0-f796ece8e1cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\GACrossbreeding">
+      <UniqueIdentifier>{661c6674-8941-4625-80d7-ab3f982b49fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Заголовочные файлы\GAReproductionScheme">
+      <UniqueIdentifier>{4e4f9691-c0db-4073-85df-e0fbb12cd265}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Form1.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkGenome.cpp">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Form1.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="GAGeneticAlgorithm.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="GAGenome.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="GAPopulation.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkGeneticAlgorithm.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkGenome.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkPopulation.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="Visualizator.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="GACrossover.h">
+      <Filter>Заголовочные файлы\GACrossover</Filter>
+    </ClInclude>
+    <ClInclude Include="SinglePointCrossover.h">
+      <Filter>Заголовочные файлы\GACrossover</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformCrossover.h">
+      <Filter>Заголовочные файлы\GACrossover</Filter>
+    </ClInclude>
+    <ClInclude Include="GAMutation.h">
+      <Filter>Заголовочные файлы\GAMutation</Filter>
+    </ClInclude>
+    <ClInclude Include="FlipBitMutation.h">
+      <Filter>Заголовочные файлы\GAMutation</Filter>
+    </ClInclude>
+    <ClInclude Include="GASelection.h">
+      <Filter>Заголовочные файлы\GASelection</Filter>
+    </ClInclude>
+    <ClInclude Include="B_TournamentSelection.h">
+      <Filter>Заголовочные файлы\GASelection</Filter>
+    </ClInclude>
+    <ClInclude Include="GAFitness.h">
+      <Filter>Заголовочные файлы\GAFitness</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomWeightFitness.h">
+      <Filter>Заголовочные файлы\GAFitness</Filter>
+    </ClInclude>
+    <ClInclude Include="GACrossbreeding.h">
+      <Filter>Заголовочные файлы\GACrossbreeding</Filter>
+    </ClInclude>
+    <ClInclude Include="Panmixia.h">
+      <Filter>Заголовочные файлы\GACrossbreeding</Filter>
+    </ClInclude>
+    <ClInclude Include="Inbreeding.h">
+      <Filter>Заголовочные файлы\GACrossbreeding</Filter>
+    </ClInclude>
+    <ClInclude Include="Autobreeding.h">
+      <Filter>Заголовочные файлы\GACrossbreeding</Filter>
+    </ClInclude>
+    <ClInclude Include="PositiveAssociativeMating.h">
+      <Filter>Заголовочные файлы\GACrossbreeding</Filter>
+    </ClInclude>
+    <ClInclude Include="GAReproductionScheme.h">
+      <Filter>Заголовочные файлы\GAReproductionScheme</Filter>
+    </ClInclude>
+    <ClInclude Include="GenerationalStrategies.h">
+      <Filter>Заголовочные файлы\GAReproductionScheme</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Form1.resx">
+      <Filter>Файлы ресурсов</Filter>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

@@ -82,6 +82,10 @@ namespace Test_GN_UI {
 		NetworkGeneticAlgorithm *gnet;
 		GACrossover<NetworkGenome, NetworkDescription> *crossover;
 		GAMutation<NetworkGenome, NetworkDescription> *mutation;
+		GASelection<NetworkPopulation> *selection;
+		GAFitness<NetworkPopulation, NetworkDescription> *fitness;
+		GACrossbreeding<NetworkPopulation, NetworkGenome> *crossbreeding;
+		GAReproductionScheme<NetworkPopulation> *reproductionScheme;
 		Visualizator *vis;
 
 		String^ STORAGE_NAME;
@@ -96,6 +100,9 @@ namespace Test_GN_UI {
 		int MUTATION_COUNT = 10;
 
 		int SELECTION_COUNT = 20;
+		double SELECTION_VARIABLE = 1;
+		double CROSSBREEDING_VARIABLE = 1;
+		double REPRODUCTION_VARIABLE = 1;
 		int MAX_PRICE = 50;
 
 	private: System::Windows::Forms::RichTextBox^  richTextBox1;
@@ -125,7 +132,9 @@ namespace Test_GN_UI {
 
 
 	private: System::Windows::Forms::Label^  label1;
-	private: System::Windows::Forms::ComboBox^  comboBox1;
+	private: System::Windows::Forms::ComboBox^  selectionTypeComboBox;
+
+
 	private: System::Windows::Forms::Label^  crossoverType;
 	private: System::Windows::Forms::ComboBox^  crossoverTypeComboBox;
 	private: System::Windows::Forms::Label^  parentChoiceType;
@@ -134,6 +143,15 @@ private: System::Windows::Forms::Label^  label4;
 private: System::Windows::Forms::TextBox^  mutationProbabilityTextBox;
 private: System::Windows::Forms::Label^  label3;
 private: System::Windows::Forms::TextBox^  mutationCountTextBox;
+
+private: System::Windows::Forms::TextBox^  selectionVariableTextBox;
+private: System::Windows::Forms::Label^  label5;
+private: System::Windows::Forms::ComboBox^  fitnessFunctionComboBox;
+private: System::Windows::Forms::Label^  label6;
+private: System::Windows::Forms::ComboBox^  reproductionSchemeComboBox;
+private: System::Windows::Forms::TextBox^  crossbreedingTextBox;
+private: System::Windows::Forms::TextBox^  reproductionSchemeTextBox;
+
 
 
 
@@ -154,6 +172,13 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->reproductionSchemeTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->crossbreedingTextBox = (gcnew System::Windows::Forms::TextBox());
+			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->reproductionSchemeComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->fitnessFunctionComboBox = (gcnew System::Windows::Forms::ComboBox());
+			this->selectionVariableTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->mutationProbabilityTextBox = (gcnew System::Windows::Forms::TextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
@@ -161,7 +186,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->mutationComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
+			this->selectionTypeComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->crossoverType = (gcnew System::Windows::Forms::Label());
 			this->crossoverTypeComboBox = (gcnew System::Windows::Forms::ComboBox());
 			this->parentChoiceType = (gcnew System::Windows::Forms::Label());
@@ -204,7 +229,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->tabControl1->Location = System::Drawing::Point(12, 12);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(826, 569);
+			this->tabControl1->Size = System::Drawing::Size(828, 569);
 			this->tabControl1->TabIndex = 0;
 			this->tabControl1->Selecting += gcnew System::Windows::Forms::TabControlCancelEventHandler(this, &Form1::tabControl1_Selecting);
 			// 
@@ -217,13 +242,20 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->tabPage1->Location = System::Drawing::Point(4, 22);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(818, 543);
+			this->tabPage1->Size = System::Drawing::Size(820, 543);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"Общее";
 			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->Controls->Add(this->reproductionSchemeTextBox);
+			this->groupBox2->Controls->Add(this->crossbreedingTextBox);
+			this->groupBox2->Controls->Add(this->label6);
+			this->groupBox2->Controls->Add(this->reproductionSchemeComboBox);
+			this->groupBox2->Controls->Add(this->label5);
+			this->groupBox2->Controls->Add(this->fitnessFunctionComboBox);
+			this->groupBox2->Controls->Add(this->selectionVariableTextBox);
 			this->groupBox2->Controls->Add(this->label4);
 			this->groupBox2->Controls->Add(this->mutationProbabilityTextBox);
 			this->groupBox2->Controls->Add(this->label3);
@@ -231,7 +263,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->groupBox2->Controls->Add(this->label2);
 			this->groupBox2->Controls->Add(this->mutationComboBox);
 			this->groupBox2->Controls->Add(this->label1);
-			this->groupBox2->Controls->Add(this->comboBox1);
+			this->groupBox2->Controls->Add(this->selectionTypeComboBox);
 			this->groupBox2->Controls->Add(this->crossoverType);
 			this->groupBox2->Controls->Add(this->crossoverTypeComboBox);
 			this->groupBox2->Controls->Add(this->parentChoiceType);
@@ -244,15 +276,80 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->groupBox2->Controls->Add(this->button3);
 			this->groupBox2->Location = System::Drawing::Point(28, 232);
 			this->groupBox2->Name = L"groupBox2";
-			this->groupBox2->Size = System::Drawing::Size(750, 305);
+			this->groupBox2->Size = System::Drawing::Size(770, 305);
 			this->groupBox2->TabIndex = 7;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"Настройки генетического алгоритма";
 			// 
+			// reproductionSchemeTextBox
+			// 
+			this->reproductionSchemeTextBox->Location = System::Drawing::Point(563, 189);
+			this->reproductionSchemeTextBox->Name = L"reproductionSchemeTextBox";
+			this->reproductionSchemeTextBox->Size = System::Drawing::Size(37, 20);
+			this->reproductionSchemeTextBox->TabIndex = 28;
+			this->toolTip2->SetToolTip(this->reproductionSchemeTextBox, L"Для ввода нажмите Пробел");
+			this->reproductionSchemeTextBox->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::reproductionSchemeTextBox_KeyUp);
+			// 
+			// crossbreedingTextBox
+			// 
+			this->crossbreedingTextBox->Location = System::Drawing::Point(185, 149);
+			this->crossbreedingTextBox->Name = L"crossbreedingTextBox";
+			this->crossbreedingTextBox->Size = System::Drawing::Size(37, 20);
+			this->crossbreedingTextBox->TabIndex = 27;
+			this->toolTip2->SetToolTip(this->crossbreedingTextBox, L"Для ввода нажмите Пробел");
+			this->crossbreedingTextBox->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::crossbreedingTextBox_KeyUp);
+			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Location = System::Drawing::Point(618, 192);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(107, 13);
+			this->label6->TabIndex = 26;
+			this->label6->Text = L"Схема репродукции";
+			// 
+			// reproductionSchemeComboBox
+			// 
+			this->reproductionSchemeComboBox->FormattingEnabled = true;
+			this->reproductionSchemeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Поколенческая репродукция" });
+			this->reproductionSchemeComboBox->Location = System::Drawing::Point(401, 189);
+			this->reproductionSchemeComboBox->Name = L"reproductionSchemeComboBox";
+			this->reproductionSchemeComboBox->Size = System::Drawing::Size(144, 21);
+			this->reproductionSchemeComboBox->TabIndex = 25;
+			this->reproductionSchemeComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::reproductionSchemeComboBox_SelectedIndexChanged);
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(618, 152);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(112, 13);
+			this->label5->TabIndex = 24;
+			this->label5->Text = L"Тип фитнес-функции";
+			// 
+			// fitnessFunctionComboBox
+			// 
+			this->fitnessFunctionComboBox->FormattingEnabled = true;
+			this->fitnessFunctionComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Ф-Ф со случайными весами" });
+			this->fitnessFunctionComboBox->Location = System::Drawing::Point(401, 149);
+			this->fitnessFunctionComboBox->Name = L"fitnessFunctionComboBox";
+			this->fitnessFunctionComboBox->Size = System::Drawing::Size(144, 21);
+			this->fitnessFunctionComboBox->TabIndex = 23;
+			this->fitnessFunctionComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::fitnessFunctionComboBox_SelectedIndexChanged);
+			// 
+			// selectionVariableTextBox
+			// 
+			this->selectionVariableTextBox->Location = System::Drawing::Point(185, 227);
+			this->selectionVariableTextBox->Name = L"selectionVariableTextBox";
+			this->selectionVariableTextBox->Size = System::Drawing::Size(37, 20);
+			this->selectionVariableTextBox->TabIndex = 21;
+			this->toolTip2->SetToolTip(this->selectionVariableTextBox, L"Для ввода нажмите Пробел");
+			this->selectionVariableTextBox->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Form1::selectionVariableTextBox_KeyUp);
+			// 
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(592, 114);
+			this->label4->Location = System::Drawing::Point(618, 114);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(117, 13);
 			this->label4->TabIndex = 20;
@@ -270,7 +367,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(214, 114);
+			this->label3->Location = System::Drawing::Point(241, 114);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(84, 13);
 			this->label3->TabIndex = 18;
@@ -288,7 +385,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(214, 267);
+			this->label2->Location = System::Drawing::Point(241, 267);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(71, 13);
 			this->label2->TabIndex = 16;
@@ -307,24 +404,26 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(214, 230);
+			this->label1->Location = System::Drawing::Point(241, 230);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(77, 13);
 			this->label1->TabIndex = 14;
 			this->label1->Text = L"Тип селекции";
 			// 
-			// comboBox1
+			// selectionTypeComboBox
 			// 
-			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Location = System::Drawing::Point(23, 227);
-			this->comboBox1->Name = L"comboBox1";
-			this->comboBox1->Size = System::Drawing::Size(144, 21);
-			this->comboBox1->TabIndex = 13;
+			this->selectionTypeComboBox->FormattingEnabled = true;
+			this->selectionTypeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"B-Турнирная селекция" });
+			this->selectionTypeComboBox->Location = System::Drawing::Point(23, 227);
+			this->selectionTypeComboBox->Name = L"selectionTypeComboBox";
+			this->selectionTypeComboBox->Size = System::Drawing::Size(144, 21);
+			this->selectionTypeComboBox->TabIndex = 13;
+			this->selectionTypeComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::selectionTypeComboBox_SelectedIndexChanged);
 			// 
 			// crossoverType
 			// 
 			this->crossoverType->AutoSize = true;
-			this->crossoverType->Location = System::Drawing::Point(214, 192);
+			this->crossoverType->Location = System::Drawing::Point(241, 192);
 			this->crossoverType->Name = L"crossoverType";
 			this->crossoverType->Size = System::Drawing::Size(89, 13);
 			this->crossoverType->TabIndex = 12;
@@ -343,24 +442,29 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// parentChoiceType
 			// 
 			this->parentChoiceType->AutoSize = true;
-			this->parentChoiceType->Location = System::Drawing::Point(214, 152);
+			this->parentChoiceType->Location = System::Drawing::Point(241, 152);
 			this->parentChoiceType->Name = L"parentChoiceType";
-			this->parentChoiceType->Size = System::Drawing::Size(141, 13);
+			this->parentChoiceType->Size = System::Drawing::Size(128, 13);
 			this->parentChoiceType->TabIndex = 10;
-			this->parentChoiceType->Text = L"Способ выбора родителей";
+			this->parentChoiceType->Text = L"Оператор скрещивания";
 			// 
 			// parentChoiceComboBox
 			// 
 			this->parentChoiceComboBox->FormattingEnabled = true;
+			this->parentChoiceComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(4) {
+				L"Панмиксия", L"Инбридинг", L"Аутбридинг",
+					L"Положительное ассоциативное скрещивание"
+			});
 			this->parentChoiceComboBox->Location = System::Drawing::Point(23, 149);
 			this->parentChoiceComboBox->Name = L"parentChoiceComboBox";
 			this->parentChoiceComboBox->Size = System::Drawing::Size(144, 21);
 			this->parentChoiceComboBox->TabIndex = 9;
+			this->parentChoiceComboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Form1::parentChoiceComboBox_SelectedIndexChanged);
 			// 
 			// label_SELECTION_COUNT
 			// 
 			this->label_SELECTION_COUNT->AutoSize = true;
-			this->label_SELECTION_COUNT->Location = System::Drawing::Point(592, 76);
+			this->label_SELECTION_COUNT->Location = System::Drawing::Point(618, 76);
 			this->label_SELECTION_COUNT->Name = L"label_SELECTION_COUNT";
 			this->label_SELECTION_COUNT->Size = System::Drawing::Size(143, 13);
 			this->label_SELECTION_COUNT->TabIndex = 8;
@@ -369,7 +473,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// label_EVOLUTION_COUNT
 			// 
 			this->label_EVOLUTION_COUNT->AutoSize = true;
-			this->label_EVOLUTION_COUNT->Location = System::Drawing::Point(214, 76);
+			this->label_EVOLUTION_COUNT->Location = System::Drawing::Point(241, 76);
 			this->label_EVOLUTION_COUNT->Name = L"label_EVOLUTION_COUNT";
 			this->label_EVOLUTION_COUNT->Size = System::Drawing::Size(115, 13);
 			this->label_EVOLUTION_COUNT->TabIndex = 7;
@@ -402,7 +506,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(217, 33);
+			this->button3->Location = System::Drawing::Point(244, 35);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(138, 23);
 			this->button3->TabIndex = 4;
@@ -416,14 +520,14 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->groupBox1->Controls->Add(this->button2);
 			this->groupBox1->Location = System::Drawing::Point(483, 23);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(295, 105);
+			this->groupBox1->Size = System::Drawing::Size(315, 105);
 			this->groupBox1->TabIndex = 6;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"Настройки сети";
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(36, 31);
+			this->button1->Location = System::Drawing::Point(46, 31);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(234, 23);
 			this->button1->TabIndex = 0;
@@ -433,7 +537,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(36, 60);
+			this->button2->Location = System::Drawing::Point(46, 60);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(234, 23);
 			this->button2->TabIndex = 2;
@@ -443,7 +547,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(519, 152);
+			this->button4->Location = System::Drawing::Point(529, 155);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(234, 40);
 			this->button4->TabIndex = 5;
@@ -467,7 +571,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->tabPage2->Location = System::Drawing::Point(4, 22);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(818, 543);
+			this->tabPage2->Size = System::Drawing::Size(820, 543);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"Статистика";
 			this->tabPage2->UseVisualStyleBackColor = true;
@@ -512,7 +616,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			this->tabPage3->Location = System::Drawing::Point(4, 22);
 			this->tabPage3->Name = L"tabPage3";
 			this->tabPage3->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage3->Size = System::Drawing::Size(818, 543);
+			this->tabPage3->Size = System::Drawing::Size(820, 543);
 			this->tabPage3->TabIndex = 2;
 			this->tabPage3->Text = L"Визуализация сети";
 			this->tabPage3->UseVisualStyleBackColor = true;
@@ -558,7 +662,7 @@ private: System::Windows::Forms::TextBox^  mutationCountTextBox;
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(850, 593);
+			this->ClientSize = System::Drawing::Size(853, 593);
 			this->Controls->Add(this->tabControl1);
 			this->Name = L"Form1";
 			this->Text = L"Form1";
@@ -635,13 +739,13 @@ private: System::Void button4_Click(System::Object^  sender, System::EventArgs^ 
 }
 
 private: System::Void textBox1_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-	if (e->KeyCode == Keys::Enter)
+	if (e->KeyCode == Keys::Space)
 	{
 		POPULATION_SIZE = System::Convert::ToInt32(textBox1->Text);
 	}
 }
 private: System::Void textBox2_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-	if (e->KeyCode == Keys::Enter)
+	if (e->KeyCode == Keys::Space)
 	{
 		EVOLUTION_COUNT = System::Convert::ToInt32(textBox_EVOLUTION_COUNT->Text);
 		gnet->setCoupleCount(EVOLUTION_COUNT);
@@ -649,7 +753,7 @@ private: System::Void textBox2_KeyUp(System::Object^  sender, System::Windows::F
 	}
 }
 private: System::Void textBox3_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-	if (e->KeyCode == Keys::Enter)
+	if (e->KeyCode == Keys::Space)
 	{
 		SELECTION_COUNT = System::Convert::ToInt32(textBox_SELECTION_COUNT->Text);
 		richTextBox1->AppendText("SELECTION_COUNT = " + SELECTION_COUNT + "\n");
@@ -795,6 +899,103 @@ private: System::Void mutationProbabilityTextBox_KeyUp(System::Object^  sender, 
 		MUTATION = System::Convert::ToDouble(mutationProbabilityTextBox->Text);
 		gnet->setMutationProbability(MUTATION);
 		richTextBox1->AppendText("MUTATION = " + MUTATION + "\n");
+	}
+}
+private: System::Void selectionVariableTextBox_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+	if (e->KeyCode == Keys::Space)
+	{
+		SELECTION_VARIABLE = System::Convert::ToInt32(selectionVariableTextBox->Text);
+		gnet->setMutationProbability(SELECTION_VARIABLE);
+		richTextBox1->AppendText("SELECTION_VARIABLE = " + SELECTION_VARIABLE + "\n");
+	}
+}
+private: System::Void selectionTypeComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	switch (selectionTypeComboBox->SelectedIndex)
+	{
+	case 0: {
+		selection = new B_TournamentSelection(SELECTION_VARIABLE);
+		gnet->setSelectionOperator(selection);
+		break;
+	}
+
+
+	default:
+		break;
+	}
+}
+private: System::Void fitnessFunctionComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	switch (fitnessFunctionComboBox->SelectedIndex)
+	{
+	case 0: {
+		fitness = new RandomWeightFitness();
+		gnet->setFitnessFunction(fitness);
+		break;
+	}
+
+
+	default:
+		break;
+	}
+}
+private: System::Void reproductionSchemeComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	switch (reproductionSchemeComboBox->SelectedIndex)
+	{
+	case 0: {
+		reproductionScheme = new GenerationalStrategies(REPRODUCTION_VARIABLE);
+		gnet->setReproductionOperator(reproductionScheme);
+		break;
+	}
+
+
+	default:
+		break;
+	}
+}
+private: System::Void parentChoiceComboBox_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+	switch (parentChoiceComboBox->SelectedIndex)
+	{
+	case 0: {
+		crossbreeding = new Panmixia(CROSSBREEDING_VARIABLE);
+		gnet->setCrossbreedingOperator(crossbreeding);
+		break;
+	}
+
+	case 1: {
+		crossbreeding = new Inbreeding(CROSSBREEDING_VARIABLE);
+		gnet->setCrossbreedingOperator(crossbreeding);
+		break;
+	}
+
+	case 2: {
+		crossbreeding = new Autobreeding(CROSSBREEDING_VARIABLE);
+		gnet->setCrossbreedingOperator(crossbreeding);
+		break;
+	}
+
+	case 3: {
+		crossbreeding = new PositiveAssociativeMating(CROSSBREEDING_VARIABLE);
+		gnet->setCrossbreedingOperator(crossbreeding);
+		break;
+	}
+
+
+	default:
+		break;
+	}
+}
+private: System::Void crossbreedingTextBox_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+
+	if (e->KeyCode == Keys::Space)
+	{
+		CROSSBREEDING_VARIABLE = System::Convert::ToDouble(crossbreedingTextBox->Text);
+		richTextBox1->AppendText("CROSSBREEDING_VARIABLE = " + CROSSBREEDING_VARIABLE + "\n");
+	}
+}
+private: System::Void reproductionSchemeTextBox_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+	if (e->KeyCode == Keys::Space)
+	{
+		REPRODUCTION_VARIABLE = System::Convert::ToDouble(reproductionSchemeTextBox->Text);
+		richTextBox1->AppendText("REPRODUCTION_VARIABLE = " + REPRODUCTION_VARIABLE + "\n");
 	}
 }
 };

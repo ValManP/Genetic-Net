@@ -1,9 +1,12 @@
 #pragma once
 
-template<class GenomeType, class Data>
+template<class PopulationType>
 class GASelection {
+
+protected:
+	int selectionVariable;
 
 public:
 
-	virtual vector<GenomeType> select(GenomeType parentA, GenomeType parentB, Data description) = 0;
+	virtual void select(PopulationType *reproductionArray, PopulationType *finalArray, int g) = 0;
 };

@@ -35,4 +35,15 @@ public:
 	Genotype getGenome(int i){
 		return population[i];
 	}
+
+	void setFitness(vector<FitnessValue> new_fitness){
+		fitness = new_fitness;
+		for (int i = 0; i < fitness.size(); i++) {
+			population[i].setFitness(fitness[i]);
+		}
+	}
+
+	vector<FitnessValue> getFitness(){
+		return fitness;
+	}
 };

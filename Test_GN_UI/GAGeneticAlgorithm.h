@@ -2,6 +2,10 @@
 
 #include "GAMutation.h"
 #include "GACrossover.h"
+#include "GASelection.h"
+#include "GAFitness.h"
+#include "GACrossbreeding.h"
+#include "GAReproductionScheme.h"
 
 template<class PopulationType, class GenomeType, class Data>
 class GAGeneticAlgorithm {
@@ -9,8 +13,13 @@ protected:
 	PopulationType* population;
 	PopulationType* childPopulation;
 	PopulationType* mutantPopulation;
+	PopulationType* reproductionArray;
 	GACrossover<GenomeType, Data> *crossoverOperator;
 	GAMutation<GenomeType, Data> *mutationOperator;
+	GASelection<PopulationType> *selectionOperator;
+	GAFitness<PopulationType, Data> *fitnessFunction;
+	GACrossbreeding<PopulationType, GenomeType> *crossbreedingOperator;
+	GAReproductionScheme<PopulationType> *reproductionOperator;
 
 	int populationSize;
 	int coupleCount;
@@ -30,6 +39,10 @@ public:
 	PopulationType getPopulation();
 	void setCrossoverOperator(GACrossover<GenomeType, Data> *new_operator);
 	void setMutationOperator(GAMutation<GenomeType, Data> *new_operator);
+	void setSelectionOperator(GASelection<PopulationType> *new_operator);
+	void setFitnessFunction(GAFitness<PopulationType, Data> *new_function);
+	void setCrossbreedingOperator(GACrossbreeding<PopulationType, GenomeType> *new_operator);
+	void setReproductionOperator(GAReproductionScheme<PopulationType> *new_operator);
 
 	virtual void gaCreatePopulation(Data data, int _populationSize) = 0;
 	virtual void gaCrossbreeding(Data data) = 0;
@@ -71,4 +84,24 @@ void GAGeneticAlgorithm<PopulationType, GenomeType, Data>::setCrossoverOperator(
 template<class PopulationType, class GenomeType, class Data>
 void GAGeneticAlgorithm<PopulationType, GenomeType, Data>::setMutationOperator(GAMutation<GenomeType, Data> *new_operator) {
 	mutationOperator = new_operator;
+}
+
+template<class PopulationType, class GenomeType, class Data>
+void GAGeneticAlgorithm<PopulationType, GenomeType, Data>::setSelectionOperator(GASelection<PopulationType> *new_operator) {
+	selectionOperator = new_operator;
+}
+
+template<class PopulationType, class GenomeType, class Data>
+void GAGeneticAlgorithm<PopulationType, GenomeType, Data>::setFitnessFunction(GAFitness<PopulationType, Data> *new_function) {
+	fitnessFunction = new_function;
+}
+
+template<class PopulationType, class GenomeType, class Data>
+void GAGeneticAlgorithm<PopulationType, GenomeType, Data>::setCrossbreedingOperator(GACrossbreeding<PopulationType, GenomeType> *new_operator){
+	crossbreedingOperator = new_operator;
+}
+
+template<class PopulationType, class GenomeType, class Data>
+void GAGeneticAlgorithm<PopulationType, GenomeType, Data>::setReproductionOperator(GAReproductionScheme<PopulationType> *new_operator){
+	reproductionOperator = new_operator;
 }

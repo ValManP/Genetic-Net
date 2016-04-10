@@ -16,7 +16,7 @@ struct Net {
 	}
 };
 
-class NetworkPopulation : public GAPopulation<NetworkGenome, int> {
+class NetworkPopulation : public GAPopulation<NetworkGenome, double> {
 private:
 	Network net;
 	vector<NetworkElement> storage;
@@ -63,14 +63,27 @@ public:
 		size = population.size();
 	}
 
+	void removeAll(){
+		population.clear();
+		size = 0;
+	}
+
 	void addAll(NetworkPopulation p){
 		for (int i = 0; i < p.getSize(); i++) {
 			this->add(p.getGenome(i));
 		}
 	}
 
-	void setFitness(vector<int> new_fitness);
-	vector<int> getFitness();
+	void replaceAll(NetworkPopulation p){
+		population.clear();
+		size = 0;
+		fitness.clear();
+
+		for (int i = 0; i < p.getSize(); i++) {
+			this->add(p.getGenome(i));
+		}
+	}
+
 	void setNet(Network new_net);
 	Network getNet();
 	void setStorage(vector<NetworkElement> _storage);
@@ -118,14 +131,6 @@ public:
 
 
 };
-
-void NetworkPopulation::setFitness(vector<int> new_fitness){
-	fitness = new_fitness;
-}
-
-vector<int> NetworkPopulation::getFitness(){
-	return fitness;
-}
 
 void NetworkPopulation::setNet(Network new_net){
 	net = new_net;

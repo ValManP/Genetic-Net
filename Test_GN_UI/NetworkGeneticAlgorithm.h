@@ -5,20 +5,23 @@
 #include "SinglePointCrossover.h"
 #include "UniformCrossover.h"
 #include "FlipBitMutation.h"
+#include "B_TournamentSelection.h"
+#include "RandomWeightFitness.h"
+#include "Panmixia.h"
+#include "Inbreeding.h"
+#include "Autobreeding.h"
+#include "PositiveAssociativeMating.h"
+#include "GenerationalStrategies.h"
 
 class NetworkGeneticAlgorithm : public GAGeneticAlgorithm<NetworkPopulation, NetworkGenome, NetworkDescription> {
 private:
-
-	//GACrossover<NetworkGenome, NetworkDescription> *crossoverOperator;
-	//GAMutation<NetworkGenome, NetworkDescription> *mutationOperator;
-
-	//NetworkPopulation population;
 
 public:
 
 	NetworkGeneticAlgorithm() {
 		childPopulation = new NetworkPopulation(0, "NA");
 		mutantPopulation = new NetworkPopulation(0, "NA");
+		reproductionArray = new NetworkPopulation(0, "NA");
 	}
 
 #pragma region GAOperation
@@ -35,18 +38,13 @@ public:
 
 	void gaCrossbreeding(NetworkDescription description){
 
-		int parent1 = 0, parent2 = 0;
 		NetworkGenome p1, p2;
 
 		int i = coupleCount;
 
 		while (i > 0) {
 
-			parent1 = population->best();
-			p1 = population->getPopulation()[parent1];
-
-			parent2 = rand() % population->getSize();
-			p2 = population->getPopulation()[parent2];
+			crossbreedingOperator->cross(population, &p1, &p2);
 
 			// Crossover
 			vector<NetworkGenome> res = crossoverOperator->crossover(p1, p2, description);
@@ -57,7 +55,7 @@ public:
 			}
 		}
 
-		population->addAll(*childPopulation);
+		reproductionArray->addAll(*childPopulation);
 
 	}
 
@@ -72,7 +70,7 @@ public:
 			}
 		}
 
-		population->addAll(*mutantPopulation);
+		reproductionArray->addAll(*mutantPopulation);
 	}
 
 	void gaFitness(NetworkDescription description){
@@ -85,7 +83,6 @@ public:
 		vector<NetworkGenome> tempPopulation = population->getPopulation();
 
 		for (int i = 0; i < size; i++) {
-			//genome = tempPopulation[i];
 			data[i].price = tempPopulation[i].calculateCost(description);
 			data[i].averageCapacity = tempPopulation[i].calculateCapacity(description, population->getNet());
 		}
@@ -93,24 +90,20 @@ public:
 		population->setData(data);
 		population->setPopulation(tempPopulation);
 
-		vector<int> fitness(size, 0);
-
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++)
-				if (data[i].price < data[j].price && data[i].averageCapacity > data[j].averageCapacity && i != j) fitness[i]++;
-		}
-
-		population->setFitness(fitness);
+		fitnessFunction->fitness(population, description);
 
 	}
 
 	void gaSelection(int g) {
 
-		int num = 0;
-		for (int i = 0; i < g; i++) {
-			num = population->worst();
-			population->remove(num);
-		}
+		NetworkPopulation *nextPopulation = new NetworkPopulation(0, "NA");
+
+		selectionOperator->select(reproductionArray, nextPopulation, g);
+		reproductionOperator->reproduct(population, nextPopulation);
+
+		reproductionArray->removeAll();
+
+		population->replaceAll(*nextPopulation);
 
 	}
 	
@@ -173,17 +166,4 @@ public:
 
 		return result;
 	}
-	/*
-	string gaShowPopulationFitness(){
-	string result;
-	char tmp[10];
-
-	for (int i = 0; i < fitness.size(); i++) {
-	_itoa_s(fitness[i], tmp, 10);
-	result += tmp;
-	result += " ";
-	}
-
-	return result;
-	}*/
 };
