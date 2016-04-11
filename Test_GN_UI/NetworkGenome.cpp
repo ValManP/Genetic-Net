@@ -102,8 +102,11 @@ int NetworkGenome::compare(GAGenome compareGenome) {
 
 int NetworkGenome::calculateCost(NetworkDescription description) {
 	cost = 0;
-	for (int i = 0; i < size; i++)
-		if (genome[i].isSet) cost += description.storage[i].price;
+
+	if (genome.size() > 0) {
+		for (int i = 0; i < size; i++)
+			if (genome[i].isSet) cost += description.storage[i].price;
+	}
 
 	return cost;
 }
@@ -112,9 +115,11 @@ int NetworkGenome::calculateCapacity(NetworkDescription description, Network n) 
 
 	Network temp = n;
 
-	for (int i = 0; i < size; i++) {
-		if (genome[i].isSet)
-			temp.updatePlatform(genome[i].position, description.storage[i].capacity);
+	if (genome.size() > 0) {
+		for (int i = 0; i < size; i++) {
+			if (genome[i].isSet)
+				temp.updatePlatform(genome[i].position, description.storage[i].capacity);
+		}
 	}
 
 	capacity = temp.findNetworkCapacity();
@@ -147,11 +152,11 @@ string NetworkGenome::toString(NetworkDescription description) {
 
 }
 
-void NetworkGenome::setFitness(int _fitness){
+void NetworkGenome::setFitness(double _fitness){
 	fitness = _fitness;
 }
 
-int NetworkGenome::getFitness(){
+double NetworkGenome::getFitness(){
 	return fitness;
 }
 

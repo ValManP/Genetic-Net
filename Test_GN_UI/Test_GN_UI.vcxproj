@@ -102,6 +102,7 @@
   <ItemGroup>
     <ClInclude Include="Autobreeding.h" />
     <ClInclude Include="B_TournamentSelection.h" />
+    <ClInclude Include="ElitistGenerationalStrategies.h" />
     <ClInclude Include="FlipBitMutation.h" />
     <ClInclude Include="Form1.h">
       <FileType>CppForm</FileType>
@@ -125,6 +126,8 @@
     <ClInclude Include="PositiveAssociativeMating.h" />
     <ClInclude Include="RandomWeightFitness.h" />
     <ClInclude Include="SinglePointCrossover.h" />
+    <ClInclude Include="StrategicOfSteadyState.h" />
+    <ClInclude Include="StrengthParetoFitness.h" />
     <ClInclude Include="UniformCrossover.h" />
     <ClInclude Include="Visualizator.h" />
   </ItemGroup>

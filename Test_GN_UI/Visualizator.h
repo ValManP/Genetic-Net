@@ -7,7 +7,7 @@ public:
 	Microsoft::Msagl::Drawing::Graph^ viewBestGenome(NetworkGeneticAlgorithm * g, NetworkDescription desc){
 		
 		Network n = g->gaGetBestNet(desc);
-		NetworkGenome gen = g->gaGetBest();
+		NetworkGenome gen = g->getBestGenome();
 		Microsoft::Msagl::Drawing::Graph^ graph = gcnew Microsoft::Msagl::Drawing::Graph();
 
 		vector<vector<int>> matr = n.getNetMatrix();

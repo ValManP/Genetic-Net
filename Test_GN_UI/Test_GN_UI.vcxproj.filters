@@ -119,6 +119,15 @@
     <ClInclude Include="GenerationalStrategies.h">
       <Filter>Заголовочные файлы\GAReproductionScheme</Filter>
     </ClInclude>
+    <ClInclude Include="ElitistGenerationalStrategies.h">
+      <Filter>Заголовочные файлы\GAReproductionScheme</Filter>
+    </ClInclude>
+    <ClInclude Include="StrategicOfSteadyState.h">
+      <Filter>Заголовочные файлы\GAReproductionScheme</Filter>
+    </ClInclude>
+    <ClInclude Include="StrengthParetoFitness.h">
+      <Filter>Заголовочные файлы\GAFitness</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Form1.resx">

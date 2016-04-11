@@ -59,7 +59,7 @@ private:
 	int cost;
 	int capacity;
 
-	int fitness;
+	double fitness;
 public:
 
 	NetworkGenome(int _size = 10);
@@ -69,8 +69,8 @@ public:
 	void fixNetworkGenome(NetworkDescription description);
 
 	int getDeviceCount();
-	void setFitness(int _fitness);
-	int getFitness();
+	void setFitness(double _fitness);
+	double getFitness();
 	int getCapacity();
 	int getCost();
 

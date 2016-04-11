@@ -311,7 +311,10 @@ private: System::Windows::Forms::TextBox^  reproductionSchemeTextBox;
 			// reproductionSchemeComboBox
 			// 
 			this->reproductionSchemeComboBox->FormattingEnabled = true;
-			this->reproductionSchemeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Поколенческая репродукция" });
+			this->reproductionSchemeComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(3) {
+				L"Поколенческая репродукция",
+					L"Элитная поколенческая репродукция", L"Репродукция устойчивого состояния"
+			});
 			this->reproductionSchemeComboBox->Location = System::Drawing::Point(401, 189);
 			this->reproductionSchemeComboBox->Name = L"reproductionSchemeComboBox";
 			this->reproductionSchemeComboBox->Size = System::Drawing::Size(144, 21);
@@ -330,7 +333,7 @@ private: System::Windows::Forms::TextBox^  reproductionSchemeTextBox;
 			// fitnessFunctionComboBox
 			// 
 			this->fitnessFunctionComboBox->FormattingEnabled = true;
-			this->fitnessFunctionComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(1) { L"Ф-Ф со случайными весами" });
+			this->fitnessFunctionComboBox->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"ФФ со случайными весами", L"ФФ на основе силы Парето" });
 			this->fitnessFunctionComboBox->Location = System::Drawing::Point(401, 149);
 			this->fitnessFunctionComboBox->Name = L"fitnessFunctionComboBox";
 			this->fitnessFunctionComboBox->Size = System::Drawing::Size(144, 21);
@@ -931,6 +934,11 @@ private: System::Void fitnessFunctionComboBox_SelectedIndexChanged(System::Objec
 		gnet->setFitnessFunction(fitness);
 		break;
 	}
+	case 1: {
+		fitness = new StrengthParetoFitness();
+		gnet->setFitnessFunction(fitness);
+		break;
+	}
 
 
 	default:
@@ -942,6 +950,18 @@ private: System::Void reproductionSchemeComboBox_SelectedIndexChanged(System::Ob
 	{
 	case 0: {
 		reproductionScheme = new GenerationalStrategies(REPRODUCTION_VARIABLE);
+		gnet->setReproductionOperator(reproductionScheme);
+		break;
+	}
+
+	case 1: {
+		reproductionScheme = new ElitistGenerationalStrategies(REPRODUCTION_VARIABLE);
+		gnet->setReproductionOperator(reproductionScheme);
+		break;
+	}
+
+	case 2: {
+		reproductionScheme = new StrategicOfSteadyState(REPRODUCTION_VARIABLE);
 		gnet->setReproductionOperator(reproductionScheme);
 		break;
 	}

@@ -35,7 +35,7 @@ public:
 		int max = 0;
 
 		for (int i = 1; i < size; i++) {
-			if (fitness[i] > fitness[max]) max = i;
+			if (population[i].getFitness() > population[max].getFitness()) max = i;
 		}
 
 		return max;
@@ -44,10 +44,10 @@ public:
 	int worst() {
 		NetworkGenome tmp;
 		int min = 0;
-
+		
 		for (int i = 1; i < size; i++) {
 			tmp = population[i];
-			if (fitness[i] < fitness[min]) min = i;
+			if (population[i].getFitness() < population[min].getFitness()) min = i;
 		}
 
 		return min;

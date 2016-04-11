@@ -12,6 +12,9 @@
 #include "Autobreeding.h"
 #include "PositiveAssociativeMating.h"
 #include "GenerationalStrategies.h"
+#include "ElitistGenerationalStrategies.h"
+#include "StrategicOfSteadyState.h"
+#include "StrengthParetoFitness.h"
 
 class NetworkGeneticAlgorithm : public GAGeneticAlgorithm<NetworkPopulation, NetworkGenome, NetworkDescription> {
 private:
@@ -75,23 +78,14 @@ public:
 
 	void gaFitness(NetworkDescription description){
 
-		int size = population->getSize();
-
-		vector<Net> data(size);
-
-		NetworkGenome genome;
-		vector<NetworkGenome> tempPopulation = population->getPopulation();
-
-		for (int i = 0; i < size; i++) {
-			data[i].price = tempPopulation[i].calculateCost(description);
-			data[i].averageCapacity = tempPopulation[i].calculateCapacity(description, population->getNet());
-		}
-
-		population->setData(data);
-		population->setPopulation(tempPopulation);
+		calculateData(population, description);
 
 		fitnessFunction->fitness(population, description);
 
+		if (reproductionArray->getSize() > 0) {
+			calculateData(reproductionArray, description);
+			fitnessFunction->fitness(reproductionArray, description);
+		}
 	}
 
 	void gaSelection(int g) {
@@ -99,12 +93,30 @@ public:
 		NetworkPopulation *nextPopulation = new NetworkPopulation(0, "NA");
 
 		selectionOperator->select(reproductionArray, nextPopulation, g);
+
 		reproductionOperator->reproduct(population, nextPopulation);
 
 		reproductionArray->removeAll();
 
 		population->replaceAll(*nextPopulation);
 
+	}
+
+	void calculateData(NetworkPopulation *p, NetworkDescription description) {
+		int size = p->getSize();
+
+		vector<Net> data(size);
+
+		NetworkGenome genome;
+		vector<NetworkGenome> tempPopulation = p->getPopulation();
+
+		for (int i = 0; i < size; i++) {
+			data[i].price = tempPopulation[i].calculateCost(description);
+			data[i].averageCapacity = tempPopulation[i].calculateCapacity(description, p->getNet());
+		}
+
+		p->setData(data);
+		p->setPopulation(tempPopulation);
 	}
 	
 #pragma endregion
@@ -132,7 +144,7 @@ public:
 
 	}
 
-	NetworkGenome gaGetBest() {
+	NetworkGenome getBestGenome() {
 
 		return population->getPopulation().at(population->best());
 
